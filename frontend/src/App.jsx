@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Send, Bot, User, Cpu } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 
 function App() {
     const [input, setInput] = useState('')
@@ -53,11 +54,15 @@ function App() {
               ${msg.role === 'user' ? 'bg-blue-600' : 'bg-green-600'}`}>
                             {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                         </div>
-                        <div className={`max-w-[80%] p-4 rounded-2xl shadow-sm text-sm leading-relaxed whitespace-pre-wrap
+                        <div className={`max-w-[80%] p-4 rounded-2xl shadow-sm text-sm leading-relaxed
               ${msg.role === 'user'
-                                ? 'bg-blue-600 text-white rounded-tr-none'
-                                : 'bg-gray-800 border border-gray-700 text-gray-200 rounded-tl-none'}`}>
-                            {msg.content}
+                                ? 'bg-blue-600 text-white rounded-tr-none whitespace-pre-wrap'
+                                : 'bg-gray-800 border border-gray-700 text-gray-200 rounded-tl-none prose prose-invert prose-sm max-w-none'}`}>
+                            {msg.role === 'user' ? (
+                                msg.content
+                            ) : (
+                                <ReactMarkdown>{msg.content}</ReactMarkdown>
+                            )}
                         </div>
                     </div>
                 ))}
