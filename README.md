@@ -1,7 +1,7 @@
 # ASTRAM
 ## A Local AI Agent with Full System Access
 
-Astram is a powerful local AI agent built with FastAPI and DeepSeek Coder, capable of executing commands directly on your system. It features a robust memory system, tool integration, and a user-friendly web interface.
+Astram is a powerful local AI agent built with FastAPI and DeepSeek Coder and llama models, capable of executing commands directly on your system. It features a robust memory system, tool integration, and a user-friendly web interface.
 
 ## Features
 
@@ -99,5 +99,6 @@ Astram comes with the following built-in tools:
 Astram uses the following configuration:
 
 - **Ollama Base URL**: `http://localhost:11434`
-- **Model Name**: `deepseek-coder:6.7b`
+- **Coding Model Name**: `deepseek-coder:6.7b`
+- **General Model Name**: `llama3`
 - **Memory File**: `memory.json`
