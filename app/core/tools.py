@@ -1,6 +1,7 @@
 import os
 import subprocess
 import platform
+from duckduckgo_search import DDGS
 
 class Tools:
     @staticmethod
@@ -44,3 +45,38 @@ class Tools:
             return f"Output:\n{result.stdout}\nErrors:\n{result.stderr}"
         except Exception as e:
             return f"Error running command: {e}"
+
+    @staticmethod
+    def search_web(query, max_results=5):
+        """
+        Search the web using DuckDuckGo and return formatted results.
+        
+        Args:
+            query: Search query string
+            max_results: Maximum number of results to return (default: 5)
+            
+        Returns:
+            Formatted string with search results including titles, snippets, and URLs
+        """
+        try:
+            with DDGS() as ddgs:
+                results = list(ddgs.text(query, max_results=max_results))
+                
+            if not results:
+                return f"No results found for: {query}"
+            
+            # Format results
+            formatted_results = f"Search results for '{query}':\n\n"
+            for i, result in enumerate(results, 1):
+                title = result.get('title', 'No title')
+                snippet = result.get('body', 'No description')
+                url = result.get('href', 'No URL')
+                
+                formatted_results += f"{i}. {title}\n"
+                formatted_results += f"   {snippet}\n"
+                formatted_results += f"   URL: {url}\n\n"
+            
+            return formatted_results.strip()
+            
+        except Exception as e:
+            return f"Error searching web: {e}"

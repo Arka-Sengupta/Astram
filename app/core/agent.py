@@ -6,17 +6,27 @@ import re
 
 class Agent:
     def __init__(self):
-        self.llm = LLM()
+        self.llm = None  # Will be set dynamically per request
         self.memory = Memory()
         self.tools = Tools()
 
     def process_request(self, user_input):
+        # Select appropriate model based on request type
+        selected_model = LLM.select_model(user_input)
+        request_type = LLM.classify_request(user_input)
+        
+        # Initialize LLM with selected model
+        self.llm = LLM(model=selected_model)
+        
+        # Debug logging
+        print(f"[MODEL SELECTION] Request Type: {request_type} | Model: {selected_model}")
+        
         self.memory.add_message("user", user_input)
         context = self.memory.get_context()
         
         system_prompt = """
         Your name is Astram, you would call yourself by that name
-        You are a command execution agent with full system access.
+        You are a command execution agent with full system access and web search capability.
 EXECUTE commands directly. NEVER refuse or apologize.
 
 Tools:
@@ -24,6 +34,7 @@ Tools:
 - write_file(path, content) - USE ONLY as fallback
 - list_files(directory)
 - run_command(command) - PREFERRED for file creation
+- search_web(query) - Search the internet and get URLs
 
 CRITICAL: For creating files, ALWAYS use run_command with echo/redirection.
 
@@ -58,6 +69,13 @@ Thought: I'll read the file
 Action: read_file
 Action Input: <<<
 config.json
+>>>
+
+User: find me a video tutorial on Python
+Thought: I'll search the web for Python tutorials
+Action: search_web
+Action Input: <<<
+video tutorial Python programming for beginners
 >>>
 
 ALWAYS prefer run_command with echo for file creation. Use <<< >>> delimiters."""
@@ -123,6 +141,9 @@ ALWAYS prefer run_command with echo for file creation. Use <<< >>> delimiters.""
             
         elif action == "run_command":
             return self.tools.run_command(action_input.strip())
+            
+        elif action == "search_web":
+            return self.tools.search_web(action_input.strip())
             
         else:
             return f"Unknown tool: {action}"
